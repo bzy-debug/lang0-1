@@ -10,6 +10,7 @@
     "declaration": true,
     "strict": true,
     "outDir": "lib",
+    "sourceMap": true,
     "baseUrl": "."
   }
 }
