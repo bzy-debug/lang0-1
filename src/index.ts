@@ -1,20 +1,23 @@
 type Exp = Var | Fn | Ap
 
-interface Var {
+type Var = {
   name: string
 }
 
-interface Fn {
+type Fn = {
   var: string
   body: Exp
 }
 
-interface Ap {
+type Ap = {
   target: Exp
   arg: Exp
 }
 
-type Value = Fn
+type Value = {
+  fnValue: Fn
+  env: Env
+}
 
 type Env = Map<string, Value>
 
@@ -64,11 +67,11 @@ function evaluate_Fn (fn: Fn, env: Env): Value {
   //   newBody = fn.body
   // }
   // return {var: fn.var, body: newBody}
-  return fn
+  return {fnValue: fn, env: env}
 }
 
 function apply (target: Value, arg: Value, env: Env): Value {
-  return evaluate(target.body, extend(env, target.var, arg))
+  return evaluate(target.fnValue.body, extend(env, target.fnValue.var, arg))
 }
 
 function evaluate_Ap (Ap: Ap, env: Env): Value {
@@ -82,11 +85,13 @@ function evaluate_Ap (Ap: Ap, env: Env): Value {
   // =>
   // (lambda (f) (lambda (x) x))
   const env: Env = new Map()
-  console.log(
+  console.dir(
     evaluate(
     {target: {var: "t", body: {var: "f", body: {name: "t"}}} , arg: {var: "x", body: {name: "x"}}},
     env
-  ))
+    ),
+    {depth: null}
+  )
 }
 
 {
@@ -94,11 +99,12 @@ function evaluate_Ap (Ap: Ap, env: Env): Value {
   // =>
   // (lambda (t) t)
   const env: Env = new Map()
-  console.log(
+  console.dir(
     evaluate(
       {target: {var: "t", body: {var: "t", body: {name: "t"}}} , arg: {var: "x", body: {name: "x"}}},
       env
-    )
+    ),
+    {depth: null}
   )
 }
 
@@ -110,10 +116,11 @@ function evaluate_Ap (Ap: Ap, env: Env): Value {
   // (lambda (t) t)
 
   const env: Env = new Map()
-  console.log(
+  console.dir(
     evaluate(
       {target: {var: "t", body: {target: {name: "t"}, arg: {var: "t", body: {name: "t"}}}} , arg: {var: "x", body: {name: "x"}}},
       env
-    )
+    ),
+    {depth: null}
   )
 }
