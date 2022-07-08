@@ -46,27 +46,20 @@ function extend (env: Env, name: string, val: Value) {
 }
 
 function evaluate (exp: Exp, env: Env): Value {
-  if (isVar(exp)) return evaluate_Var(exp as Var, env)
-  else if (isFn(exp)) return evaluate_Fn(exp as Fn, env)
-  else if (isAp(exp)) return evaluate_Ap(exp as Ap, env)
+  if (isVar(exp)) return evaluateVar(exp as Var, env)
+  else if (isFn(exp)) return evaluateFn(exp as Fn, env)
+  else if (isAp(exp)) return evaluateAp(exp as Ap, env)
   throw new Error("Unsupported exp")
 }
 
-function evaluate_Var (vari: Var, env: Env): Value {
+function evaluateVar (vari: Var, env: Env): Value {
   const value = findValue(vari.name, env)
   if (value === undefined)
-    throw `undefined variable ${vari.name}`
+    throw new Error(`undefined variable ${vari.name}`)
   return value
 }
 
-function evaluate_Fn (fn: Fn, env: Env): Value {
-  // let newBody = fn.body
-  // try {
-  //   newBody = evaluate(fn.body, env)
-  // } catch (error) {
-  //   newBody = fn.body
-  // }
-  // return {var: fn.var, body: newBody}
+function evaluateFn (fn: Fn, env: Env): Value {
   return {fnValue: fn, env: env}
 }
 
@@ -74,7 +67,7 @@ function apply (target: Value, arg: Value, env: Env): Value {
   return evaluate(target.fnValue.body, extend(env, target.fnValue.var, arg))
 }
 
-function evaluate_Ap (Ap: Ap, env: Env): Value {
+function evaluateAp (Ap: Ap, env: Env): Value {
   const taget = evaluate(Ap.target, env)
   const arg = evaluate(Ap.arg, env)
   return apply(taget, arg, env)
