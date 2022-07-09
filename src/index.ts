@@ -1,11 +1,9 @@
 type Exp = Var | Fn | Ap
 
-type Var = {
-  name: string
-}
+type Var = string
 
 type Fn = {
-  var: string
+  var: Var
   body: Exp
 }
 
@@ -22,7 +20,7 @@ type Value = {
 type Env = Map<string, Value>
 
 function isVar (exp: Exp): exp is Var {
-  return (exp as Var).name !== undefined
+  return typeof exp === "string"
 }
 
 function isFn (exp: Exp): exp is Fn {
@@ -52,10 +50,10 @@ function evaluate (exp: Exp, env: Env): Value {
   throw new Error("Unsupported exp")
 }
 
-function evaluateVar (vari: Var, env: Env): Value {
-  const value = findValue(vari.name, env)
+function evaluateVar (variable: Var, env: Env): Value {
+  const value = findValue(variable, env)
   if (value === undefined)
-    throw new Error(`undefined variable ${vari.name}`)
+    throw new Error(`undefined variable ${variable}`)
   return value
 }
 
@@ -80,7 +78,7 @@ function evaluateAp (Ap: Ap, env: Env): Value {
   const env: Env = new Map()
   console.dir(
     evaluate(
-    {target: {var: "t", body: {var: "f", body: {name: "t"}}} , arg: {var: "x", body: {name: "x"}}},
+    {target: {var: "t", body: {var: "f", body: "t"}} , arg: {var: "x", body: "x"}},
     env
     ),
     {depth: null}
@@ -94,7 +92,7 @@ function evaluateAp (Ap: Ap, env: Env): Value {
   const env: Env = new Map()
   console.dir(
     evaluate(
-      {target: {var: "t", body: {var: "t", body: {name: "t"}}} , arg: {var: "x", body: {name: "x"}}},
+      {target: {var: "t", body: {var: "t", body: "t"}} , arg: {var: "x", body: "x"}},
       env
     ),
     {depth: null}
@@ -111,7 +109,7 @@ function evaluateAp (Ap: Ap, env: Env): Value {
   const env: Env = new Map()
   console.dir(
     evaluate(
-      {target: {var: "t", body: {target: {name: "t"}, arg: {var: "t", body: {name: "t"}}}} , arg: {var: "x", body: {name: "x"}}},
+      {target: {var: "t", body: {target: "t", arg: {var: "t", body: "t"}}} , arg: {var: "x", body: "x"} },
       env
     ),
     {depth: null}
