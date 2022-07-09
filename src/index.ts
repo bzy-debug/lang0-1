@@ -71,6 +71,70 @@ function evaluateAp (Ap: Ap, env: Env): Value {
   return apply(taget, arg, env)
 }
 
+
+function union(set1: Set<Var>, set2: Set<Var>): Set<Var> {
+  const newSet: Set<Var> = new Set()
+
+  for (let item of set1)
+    newSet.add(item)
+
+  for (let item of set2)
+    newSet.add(item)
+
+  return newSet
+}
+
+function minus(set1: Set<Var>, set2: Set<Var>): Set<Var> {
+  const newSet: Set<Var> = new Set()
+
+  for (let item of set1)
+    newSet.add(item)
+
+  for (let item of set2)
+    newSet.delete(item)
+
+  return newSet
+}
+
+// FV(x) = {x}
+// FV(MN) = FV(M) union FV(N)
+// FV(lambda x [M]) = FV(M) - {x}
+
+function freeVar(exp: Exp): Set<Var> {
+  if (isVar(exp)) {
+    let t = exp as Var
+    return new Set(t)
+  }
+  else if (isAp(exp)) {
+    let ap = exp as Ap
+    return union(freeVar(ap.target), freeVar(ap.arg))
+  }
+  else if (isFn(exp)) {
+    let fn = exp as Fn
+    return minus(freeVar(fn.body), freeVar(fn.var))
+  }
+  throw new Error("Unsupported exp")
+}
+
+// BV(x) = {empty}
+// BV(MN) = BV(M) union BV(N)
+// BV(lambda x [M]) = BV(M) union {x}
+
+function boundVar(exp: Exp): Set<Var> {
+  if (isVar(exp)) {
+    return new Set()
+  }
+  else if (isAp(exp)) {
+    let ap = exp as Ap
+    return union(boundVar(ap.target), boundVar(ap.arg))
+  }
+  else if (isFn(exp)) {
+    let fn = exp as Fn
+    return union(boundVar(fn.body), new Set(fn.var))
+  }
+  throw new Error("Unsupported exp")
+}
+
 {
   // ((lambda (t) (lambda (f) t)) (lambda (x) x))
   // =>
@@ -83,6 +147,8 @@ function evaluateAp (Ap: Ap, env: Env): Value {
     ),
     {depth: null}
   )
+  console.log(freeVar({target: {var: "t", body: {var: "f", body: "t"}} , arg: {var: "x", body: "x"}}))
+  console.log(boundVar({target: {var: "t", body: {var: "f", body: "t"}} , arg: {var: "x", body: "x"}}))
 }
 
 {
