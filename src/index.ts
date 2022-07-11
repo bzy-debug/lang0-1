@@ -1,4 +1,3 @@
-// kind
 type Exp = Var | Fn | Ap
 
 type Var = {
@@ -8,7 +7,7 @@ type Var = {
 
 type Fn = {
   kind: "Fn"
-  var: Var
+  name: Var
   body: Exp
 }
 
@@ -25,57 +24,59 @@ type Value = {
 
 type Env = Map<string, Value>
 
-function findValue (name: string, env: Env) {
+function findValue(name: string, env: Env) {
   return env.get(name)
 }
 
-function extend (env: Env, name: string, val: Value) {
+function extend(env: Env, name: string, val: Value) {
   const newEnv: Env = new Map()
-  for (const [n, v] of env) {
-    newEnv.set(n, v)
+  for (const [k, v] of env) {
+    newEnv.set(k, v)
   }
   newEnv.set(name, val)
   return newEnv
 }
 
-function evaluate (exp: Exp, env: Env): Value {
+function evaluate(exp: Exp, env: Env): Value {
   switch (exp.kind) {
-    case "Var": return evaluateVar(exp, env)
-    case "Fn": return evaluateFn(exp, env)
-    case "Ap": return evaluateAp(exp, env)
+    case "Var":
+      return evaluateVar(exp, env)
+    case "Fn":
+      return evaluateFn(exp, env)
+    case "Ap":
+      return evaluateAp(exp, env)
   }
 }
 
-function evaluateVar (v: Var, env: Env): Value {
+function evaluateVar(v: Var, env: Env): Value {
   const value = findValue(v.name, env)
-  if (value === undefined)
-    throw new Error(`undefined variable ${v.name}`)
+  if (value === undefined) throw new Error(`undefined variable ${v.name}`)
   return value
 }
 
-function evaluateFn (fn: Fn, env: Env): Value {
-  return {fnValue: fn, env: env}
+function evaluateFn(fn: Fn, env: Env): Value {
+  return { fnValue: fn, env: env }
 }
 
-function apply (target: Value, arg: Value, env: Env): Value {
-  return evaluate(target.fnValue.body, extend(env, target.fnValue.var.name, arg))
+function apply(target: Value, arg: Value, env: Env): Value {
+  return evaluate(
+    target.fnValue.body,
+    extend(env, target.fnValue.name.name, arg)
+  )
 }
 
-function evaluateAp (Ap: Ap, env: Env): Value {
+function evaluateAp(Ap: Ap, env: Env): Value {
   const taget = evaluate(Ap.target, env)
   const arg = evaluate(Ap.arg, env)
   return apply(taget, arg, env)
 }
 
-
 function union(set1: Set<string>, set2: Set<string>): Set<string> {
   const newSet: Set<string> = new Set()
 
-  for (let item of set1)
-    newSet.add(item)
+  for (const item of set1) newSet.add(item)
 
-  for (let item of set2)
-    newSet.add(item)
+  for (const item of set2) newSet.add(item)
 
   return newSet
 }
@@ -83,11 +84,9 @@ function union(set1: Set<string>, set2: Set<string>): Set<string> {
 function minus(set1: Set<string>, set2: Set<string>): Set<string> {
   const newSet: Set<string> = new Set()
 
-  for (let item of set1)
-    newSet.add(item)
+  for (const item of set1) newSet.add(item)
 
-  for (let item of set2)
-    newSet.delete(item)
+  for (const item of set2) newSet.delete(item)
 
   return newSet
 }
@@ -98,9 +97,12 @@ function minus(set1: Set<string>, set2: Set<string>): Set<string> {
 
 function freeVar(exp: Exp): Set<string> {
   switch (exp.kind) {
-    case "Var": return new Set(exp.name)
-    case "Ap":  return union(freeVar(exp.target), freeVar(exp.arg))
-    case "Fn":  return minus(freeVar(exp.body), freeVar(exp.var))
+    case "Var":
+      return new Set(exp.name)
+    case "Ap":
+      return union(freeVar(exp.target), freeVar(exp.arg))
+    case "Fn":
+      return minus(freeVar(exp.body), freeVar(exp.name))
   }
 }
 
@@ -110,8 +112,11 @@ function freeVar(exp: Exp): Set<string> {
 
 function boundVar(exp: Exp): Set<string> {
   switch (exp.kind) {
-    case "Var": return new Set()
-    case "Ap":  return union(boundVar(exp.target), boundVar(exp.arg))
-    case "Fn":  return union(boundVar(exp.body), boundVar(exp.var))
+    case "Var":
+      return new Set()
+    case "Ap":
+      return union(boundVar(exp.target), boundVar(exp.arg))
+    case "Fn":
+      return union(boundVar(exp.body), boundVar(exp.name))
   }
 }

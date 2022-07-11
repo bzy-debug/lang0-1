@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "format": "prettier src docs --write"
+    "format": "prettier src --write"
   },
   "prettier": {
     "semi": false,
