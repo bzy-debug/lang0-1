@@ -1,5 +1,6 @@
 import { Parser } from "../parser"
 import { evaluate } from "../evaluate"
+import * as Format from "../format"
 
 const parser = new Parser()
 
@@ -12,7 +13,7 @@ const parser = new Parser()
   const exp = parser.parseExp("((lambda (t f) t) (lambda (x) x))")
   const value = evaluate(exp, env)
 
-  console.dir(value, { depth: null })
+  console.log(Format.formatValue(value))
 }
 
 {
@@ -26,7 +27,7 @@ const parser = new Parser()
   `)
   const value = evaluate(exp, env)
 
-  console.dir(value, { depth: null })
+  console.log(Format.formatValue(value))
 }
 
 {
@@ -42,6 +43,6 @@ const parser = new Parser()
   )
   const value = evaluate(exp, env)
 
-  console.dir(value, { depth: null })
+  console.log(Format.formatValue(value))
 }
 

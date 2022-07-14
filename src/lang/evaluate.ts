@@ -14,7 +14,7 @@ export function evaluate(exp: Exp, env: Env): Value {
   }
 }
 
-export function evaluateVar(v: Var, env: Env): Value {
+function evaluateVar(v: Var, env: Env): Value {
   const value = findValue(v.name, env)
   if (value === undefined) throw new Error(`undefined variable ${v.name}`)
   return value
@@ -22,18 +22,18 @@ export function evaluateVar(v: Var, env: Env): Value {
 
 // (lambda (x) ((lambda(y) y) M)
 
-export function evaluateFn(fn: Fn, env: Env): Value {
+function evaluateFn(fn: Fn, env: Env): Value {
   return { fnValue: fn, env: env }
 }
 
-export function apply(target: Value, arg: Value, env: Env): Value {
+function apply(target: Value, arg: Value, env: Env): Value {
   return evaluate(
     target.fnValue.body,
     extend(env, target.fnValue.name.name, arg)
   )
 }
 
-export function evaluateAp(Ap: Ap, env: Env): Value {
+function evaluateAp(Ap: Ap, env: Env): Value {
   const taget = evaluate(Ap.target, env)
   const arg = evaluate(Ap.arg, env)
   return apply(taget, arg, env)
