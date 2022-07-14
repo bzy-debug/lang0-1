@@ -20,6 +20,8 @@ export function evaluateVar(v: Var, env: Env): Value {
   return value
 }
 
+// (lambda (x) ((lambda(y) y) M)
+
 export function evaluateFn(fn: Fn, env: Env): Value {
   return { fnValue: fn, env: env }
 }
