@@ -17,7 +17,9 @@ type Ap = {
   arg: Exp
 }
 
-type Value = {
+type Value = FnValue
+
+type FnValue = {
   fnValue: Fn
   env: Env
 }
@@ -71,8 +73,8 @@ function evaluateAp(Ap: Ap, env: Env): Value {
   return apply(taget, arg, env)
 }
 
-function union(set1: Set<string>, set2: Set<string>): Set<string> {
-  const newSet: Set<string> = new Set()
+function union(set1: Set<any>, set2: Set<any>): Set<any> {
+  const newSet: Set<any> = new Set()
 
   for (const item of set1) newSet.add(item)
 
@@ -81,8 +83,8 @@ function union(set1: Set<string>, set2: Set<string>): Set<string> {
   return newSet
 }
 
-function minus(set1: Set<string>, set2: Set<string>): Set<string> {
-  const newSet: Set<string> = new Set()
+function minus(set1: Set<any>, set2: Set<any>): Set<any> {
+  const newSet: Set<any> = new Set()
 
   for (const item of set1) newSet.add(item)
 
@@ -93,7 +95,7 @@ function minus(set1: Set<string>, set2: Set<string>): Set<string> {
 
 // FV(x) = {x}
 // FV(MN) = FV(M) union FV(N)
-// FV(lambda x [M]) = FV(M) - {x}
+// FV(lambda (x) (M)) = FV(M) - {x}
 
 function freeVar(exp: Exp): Set<string> {
   switch (exp.kind) {
@@ -108,7 +110,7 @@ function freeVar(exp: Exp): Set<string> {
 
 // BV(x) = {empty}
 // BV(MN) = BV(M) union BV(N)
-// BV(lambda x [M]) = BV(M) union {x}
+// BV(lambda (x) (M)) = BV(M) union {x}
 
 function boundVar(exp: Exp): Set<string> {
   switch (exp.kind) {
