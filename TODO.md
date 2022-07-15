@@ -1,5 +1,7 @@
 * reimplement lang0
 
+* leftmost strategy can find the normal form
+  * find the leftmost subterm of (MN) form, where M is a Fn
 
 
 * try beta reduction without closure
