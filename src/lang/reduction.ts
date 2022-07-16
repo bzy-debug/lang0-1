@@ -6,23 +6,23 @@ function isReducible(exp: Exp): boolean {
   return exp.kind === "Ap" && exp.arg.kind === "Fn"
 }
 
-function leftmostReduible(exp: Exp): Exp | null {
+export function leftmostReducible(exp: Exp): Exp | null {
   if (isReducible(exp)) return exp
   switch (exp.kind) {
     case "Var": {
       return null
     }
     case "Fn": {
-      let tmp = leftmostReduible(exp.name)
+      let tmp = leftmostReducible(exp.name)
       if (tmp == null)
-        return leftmostReduible(exp.body)
+        return leftmostReducible(exp.body)
       else
         return tmp
     }
     case "Ap": {
-      let tmp = leftmostReduible(exp.target)
+      let tmp = leftmostReducible(exp.target)
       if (tmp == null)
-        return leftmostReduible(exp.arg)
+        return leftmostReducible(exp.arg)
       return tmp
     }
   }

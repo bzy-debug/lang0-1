@@ -1,7 +1,7 @@
 import { Parser } from "../parser"
 import * as Exps from "../exps"
 import * as Format from "../format"
-import { alphaConvertion, stepBetaReduction } from "../reduction"
+import { alphaConvertion, stepBetaReduction, leftmostReducible } from "../reduction"
 
 const parser = new Parser()
 
@@ -28,5 +28,7 @@ const parser = new Parser()
   // ((lambda (t) (t (lambda (t) t))) (lambda (x) x))
   //
   const exp = parser.parseExp("((lambda (t) (t (lambda (t) t))) (lambda (x) x))")
-  console.log(Format.format(stepBetaReduction(stepBetaReduction(exp as Exps.Ap) as Exps.Ap)))
+  let one = stepBetaReduction(exp as Exps.Ap)
+  let r = leftmostReducible(one)
+  console.log(r === null ? "null" : Format.format(r))
 }
