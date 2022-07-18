@@ -1,35 +1,40 @@
 import { Exp } from "./exp"
 import * as Exps from "./exps"
-import { freeVar, boundVar } from "./fv-bv"
+import { freeVar } from "./fv-bv"
 
-function isReducible(exp: Exp): boolean {
+function isRedex(exp: Exp): boolean {
   return exp.kind === "Ap" && exp.arg.kind === "Fn"
 }
 
-export function leftmostReducible(exp: Exp): Exp | null {
-  if (isReducible(exp)) return exp
+function containRedex(exp: Exp): boolean {
+  if (isRedex(exp)) return true
+  switch(exp.kind) {
+    case "Var": return false
+    case "Fn": return containRedex(exp.body)
+    case "Ap": return containRedex(exp.arg) || containRedex(exp.target)
+  }
+}
+
+export function reduction(exp: Exp): Exp {
+  while(containRedex(exp))
+    exp = leftmostReduction(exp)
+  return exp
+}
+
+function leftmostReduction(exp: Exp): Exp{
+  if (isRedex(exp)) return stepBetaReduction(exp as Exps.Ap)
   switch (exp.kind) {
-    case "Var": {
-      return null
-    }
-    case "Fn": {
-      let tmp = leftmostReducible(exp.name)
-      if (tmp == null)
-        return leftmostReducible(exp.body)
-      else
-        return tmp
-    }
-    case "Ap": {
-      let tmp = leftmostReducible(exp.target)
-      if (tmp == null)
-        return leftmostReducible(exp.arg)
-      return tmp
-    }
+    case "Var":
+      return exp
+    case "Fn":
+      return {kind: "Fn", name: exp.name, body: leftmostReduction(exp.body)}
+    case "Ap":
+      return {kind: "Ap", target: leftmostReduction(exp.target), arg: leftmostReduction(exp.arg)}
   }
 }
 
 // [a-z] => _
-export function alphaConvertion(fn: Exps.Fn): Exps.Fn {
+function alphaConvertion(fn: Exps.Fn): Exps.Fn {
   const newFn: Exps.Fn = structuredClone(fn)
   const bound = newFn.name.name.slice()
   newFn.name.name = "_"
@@ -58,7 +63,7 @@ export function alphaConvertion(fn: Exps.Fn): Exps.Fn {
   return newFn
 }
 
-export function stepBetaReduction(ap: Exps.Ap): Exp {
+function stepBetaReduction(ap: Exps.Ap): Exp {
   const fn = alphaConvertion(ap.target as Exps.Fn)
   const test = (exp: Exp) => {return exp.kind === "Var" && exp.name === "_"}
 
