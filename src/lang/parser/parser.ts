@@ -35,10 +35,10 @@ function matchExp(sexp: Sexp): Exp {
 
     [
       cons(v("target"), v("args")),
-      ({ target, args }) => {
-        let result = matchExp(target)
-        for (const arg of matchList(args, matchExp)) {
-          result = {kind:"Ap", target: result, arg: arg}
+      ({ target: rator, args: rand }) => {
+        let result = matchExp(rator)
+        for (const arg of matchList(rand, matchExp)) {
+          result = {kind:"Ap", rator: result, rand: arg}
         }
 
         return result

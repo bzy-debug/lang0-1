@@ -29,7 +29,7 @@ export function freeVar(exp: Exp): Set<string> {
     case "Var":
       return new Set(exp.name)
     case "Ap":
-      return union(freeVar(exp.target), freeVar(exp.arg))
+      return union(freeVar(exp.rator), freeVar(exp.rand))
     case "Fn":
       return minus(freeVar(exp.body), freeVar(exp.name))
   }
@@ -44,7 +44,7 @@ export function boundVar(exp: Exp): Set<string> {
     case "Var":
       return new Set()
     case "Ap":
-      return union(boundVar(exp.target), boundVar(exp.arg))
+      return union(boundVar(exp.rator), boundVar(exp.rand))
     case "Fn":
       return union(boundVar(exp.body), boundVar(exp.name))
   }

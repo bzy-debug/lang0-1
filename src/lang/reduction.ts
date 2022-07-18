@@ -1,9 +1,10 @@
 import { Exp } from "./exp"
 import * as Exps from "./exps"
 import { freeVar } from "./fv-bv"
+import * as Format from "./format"
 
 function isRedex(exp: Exp): boolean {
-  return exp.kind === "Ap" && exp.arg.kind === "Fn"
+  return exp.kind === "Ap" && exp.rator.kind === "Fn"
 }
 
 function containRedex(exp: Exp): boolean {
@@ -11,13 +12,15 @@ function containRedex(exp: Exp): boolean {
   switch(exp.kind) {
     case "Var": return false
     case "Fn": return containRedex(exp.body)
-    case "Ap": return containRedex(exp.arg) || containRedex(exp.target)
+    case "Ap": return containRedex(exp.rand) || containRedex(exp.rator)
   }
 }
 
 export function reduction(exp: Exp): Exp {
-  while(containRedex(exp))
+  while(containRedex(exp)) {
     exp = leftmostReduction(exp)
+    console.log(Format.format(exp))
+  }
   return exp
 }
 
@@ -29,7 +32,7 @@ function leftmostReduction(exp: Exp): Exp{
     case "Fn":
       return {kind: "Fn", name: exp.name, body: leftmostReduction(exp.body)}
     case "Ap":
-      return {kind: "Ap", target: leftmostReduction(exp.target), arg: leftmostReduction(exp.arg)}
+      return {kind: "Ap", rator: leftmostReduction(exp.rator), rand: leftmostReduction(exp.rand)}
   }
 }
 
@@ -54,7 +57,7 @@ function alphaConvertion(fn: Exps.Fn): Exps.Fn {
         break
       }
       case "Ap" : {
-        queue.push(p.target, p.arg)
+        queue.push(p.rator, p.rand)
         break
       }
     }
@@ -64,11 +67,11 @@ function alphaConvertion(fn: Exps.Fn): Exps.Fn {
 }
 
 function stepBetaReduction(ap: Exps.Ap): Exp {
-  const fn = alphaConvertion(ap.target as Exps.Fn)
+  const fn = alphaConvertion(ap.rator as Exps.Fn)
   const test = (exp: Exp) => {return exp.kind === "Var" && exp.name === "_"}
 
   if (test(fn.body)) {
-    fn.body = ap.arg
+    fn.body = ap.rand
     return fn.body
   }
 
@@ -82,22 +85,22 @@ function stepBetaReduction(ap: Exps.Ap): Exp {
 
       case "Fn": {
         if (test(p.body))
-          p.body = ap.arg
+          p.body = ap.rand
         else
           queue.push(p.body)
         break
       }
 
       case "Ap": {
-        if (test(p.target))
-          p.target = ap.arg
+        if (test(p.rator))
+          p.rator = ap.rand
         else
-          queue.push(p.target)
+          queue.push(p.rator)
 
-        if (test(p.arg))
-          p.arg = ap.arg
+        if (test(p.rand))
+          p.rand = ap.rand
         else
-          queue.push(p.arg)
+          queue.push(p.rand)
       }
     }
   }

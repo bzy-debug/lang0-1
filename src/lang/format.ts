@@ -19,7 +19,7 @@ function formatVar(v: Exps.Var): string {
 }
 
 function formatAp(ap: Exps.Ap): string {
-  return `(${format(ap.target)} ${format(ap.arg)})`
+  return `(${format(ap.rator)} ${format(ap.rand)})`
 }
 
 function formatFn(fn: Exps.Fn): string {

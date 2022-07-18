@@ -1,1 +1,0 @@
-(lambda (_) ((lambda (x) x) _))

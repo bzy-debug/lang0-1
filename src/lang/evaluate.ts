@@ -26,15 +26,15 @@ function evaluateFn(fn: Fn, env: Env): Value {
   return { fnValue: fn, env: env }
 }
 
-function apply(target: Value, arg: Value, env: Env): Value {
+function apply(rator: Value, rand: Value, env: Env): Value {
   return evaluate(
-    target.fnValue.body,
-    extend(env, target.fnValue.name.name, arg)
+    rator.fnValue.body,
+    extend(env, rator.fnValue.name.name, rand)
   )
 }
 
 function evaluateAp(Ap: Ap, env: Env): Value {
-  const taget = evaluate(Ap.target, env)
-  const arg = evaluate(Ap.arg, env)
-  return apply(taget, arg, env)
+  const rator = evaluate(Ap.rator, env)
+  const rand = evaluate(Ap.rand, env)
+  return apply(rator, rand, env)
 }
