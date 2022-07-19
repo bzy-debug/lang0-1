@@ -23,13 +23,13 @@ function evaluateVar(v: Var, env: Env): Value {
 // (lambda (x) ((lambda(y) y) M)
 
 function evaluateFn(fn: Fn, env: Env): Value {
-  return { fnValue: fn, env: env }
+  return { env: env, name: fn.name, body: fn.body }
 }
 
 function apply(rator: Value, rand: Value, env: Env): Value {
   return evaluate(
-    rator.fnValue.body,
-    extend(env, rator.fnValue.name.name, rand)
+    rator.body,
+    extend(env, rator.name.name, rand)
   )
 }
 

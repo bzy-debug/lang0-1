@@ -13,7 +13,6 @@ const parser = new Parser()
   const exp = parser.parseExp("((lambda (t f) t) (lambda (x) x))")
   const value = evaluate(exp, env)
 
-  console.log(Format.formatValue(value))
 }
 
 {
@@ -27,7 +26,6 @@ const parser = new Parser()
   `)
   const value = evaluate(exp, env)
 
-  console.log(Format.formatValue(value))
 }
 
 {
@@ -43,6 +41,5 @@ const parser = new Parser()
   )
   const value = evaluate(exp, env)
 
-  console.log(Format.formatValue(value))
 }
 

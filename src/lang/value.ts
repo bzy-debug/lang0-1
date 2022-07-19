@@ -1,3 +1,3 @@
-import {FnValue} from "./values"
+import {Closure} from "./values"
 
-export type Value = FnValue
+export type Value = Closure

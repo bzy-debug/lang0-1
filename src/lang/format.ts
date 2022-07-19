@@ -1,10 +1,5 @@
 import * as Exps from "./exps"
 import {Exp} from "./exp"
-import {Value} from "./value"
-
-export function formatValue(val: Value):string {
-  return formatFn(val.fnValue)
-}
 
 export function format(exp: Exp) {
   switch (exp.kind) {

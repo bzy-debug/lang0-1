@@ -1,7 +1,9 @@
-import {Fn} from "../exps"
+import {Exp} from "../exp"
+import {Var} from "../exps"
 import {Env} from "../env"
 
-export type FnValue = {
-  fnValue: Fn
+export type Closure = {
   env: Env
+  name: Var
+  body: Exp
 }

@@ -3,6 +3,8 @@ import { Parser as SexpParser } from "@cicada-lang/sexp/lib/parser"
 import { cons, v } from "@cicada-lang/sexp/lib/pattern-exp"
 import { Sexp } from "@cicada-lang/sexp/lib/sexp"
 import { Exp } from "../exp"
+import { Stmt } from "../stmt"
+import * as Stmts from "../stmts"
 
 export class Parser extends SexpParser {
   constructor() {
@@ -17,7 +19,29 @@ export class Parser extends SexpParser {
     const sexp = this.parseSexp(text)
     return matchExp(sexp)
   }
+
+  parseStmt(text: string): Array<Stmt> {
+    return this.parseSexps(text).map(matchStmt)
+
+  }
 }
+
+function matchStmt(sexp: Sexp): Stmt {
+  return match<Stmt>(sexp, [
+    [
+      ["define", v("name"), v("exp")],
+      ({ name, exp }) => {
+        return {kind: "Define", id: matchSymbol(name), exp: matchExp(exp)}
+      },
+    ],
+
+    [v("exp"), ({ exp }) => {
+        return {kind: "Expression", exp: matchExp(exp)}
+      },
+    ]
+  ])
+}
+
 
 function matchExp(sexp: Sexp): Exp {
   return match<Exp>(sexp, [
