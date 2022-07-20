@@ -1,6 +1,5 @@
 import { Parser } from "../parser"
 import { evaluate } from "../evaluate"
-import * as Format from "../format"
 
 const parser = new Parser()
 
@@ -12,6 +11,7 @@ const parser = new Parser()
   const env = new Map()
   const exp = parser.parseExp("((lambda (t f) t) (lambda (x) x))")
   const value = evaluate(exp, env)
+  console.dir(value)
 
 }
 
@@ -25,6 +25,7 @@ const parser = new Parser()
     ((lambda (t) (lambda (t) t)) (lambda (x) x))
   `)
   const value = evaluate(exp, env)
+  console.dir(value)
 
 }
 
@@ -40,6 +41,7 @@ const parser = new Parser()
     "((lambda (t) (t (lambda (t) t))) (lambda (x) x))"
   )
   const value = evaluate(exp, env)
+  console.dir(value)
 
 }
 

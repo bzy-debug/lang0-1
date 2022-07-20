@@ -1,6 +1,6 @@
 import {Var, Ap, Fn} from "./exps"
 import {Exp} from "./exp"
-import {Env, findValue, extend} from "./env"
+import {Env, extend} from "./env"
 import {Value} from "./value"
 
 export function evaluate(exp: Exp, env: Env): Value {
@@ -15,26 +15,27 @@ export function evaluate(exp: Exp, env: Env): Value {
 }
 
 function evaluateVar(v: Var, env: Env): Value {
-  const value = findValue(v.name, env)
-  if (value === undefined) throw new Error(`undefined variable ${v.name}`)
+  const value = env.get(v.name)
+  if (value === undefined) {
+    console.log(env)
+    throw new Error(`undefined variable ${v.name}`)
+  }
   return value
 }
-
-// (lambda (x) ((lambda(y) y) M)
 
 function evaluateFn(fn: Fn, env: Env): Value {
   return { env: env, name: fn.name, body: fn.body }
 }
 
-function apply(rator: Value, rand: Value, env: Env): Value {
+function apply(rator: Value, rand: Value): Value {
   return evaluate(
     rator.body,
-    extend(env, rator.name.name, rand)
+    extend(rator.env, rator.name.name, rand)
   )
 }
 
 function evaluateAp(Ap: Ap, env: Env): Value {
   const rator = evaluate(Ap.rator, env)
   const rand = evaluate(Ap.rand, env)
-  return apply(rator, rand, env)
+  return apply(rator, rand)
 }

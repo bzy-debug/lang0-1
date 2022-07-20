@@ -4,7 +4,6 @@ import { cons, v } from "@cicada-lang/sexp/lib/pattern-exp"
 import { Sexp } from "@cicada-lang/sexp/lib/sexp"
 import { Exp } from "../exp"
 import { Stmt } from "../stmt"
-import * as Stmts from "../stmts"
 
 export class Parser extends SexpParser {
   constructor() {
