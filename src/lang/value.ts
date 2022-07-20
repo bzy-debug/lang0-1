@@ -1,3 +1,4 @@
 import {Closure} from "./values"
+import {Neutral} from "./values"
 
-export type Value = Closure
+export type Value = Closure | Neutral

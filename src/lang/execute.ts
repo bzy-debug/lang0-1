@@ -2,6 +2,8 @@ import {Stmt} from "./stmt"
 import * as Stmts from "./stmts"
 import {Env, extend} from "./env"
 import {evaluate} from "./evaluate"
+import {normalization} from "./nbe"
+import {format} from "./format"
 
 export function execute(stmt: Stmt, env: Env): Env {
   switch (stmt.kind) {
@@ -15,6 +17,6 @@ function executeDef(def: Stmts.Define, env: Env): Env {
 }
 
 function executeExp(exp: Stmts.Expression, env: Env): Env {
-  evaluate(exp.exp, env)
+  console.log(format(normalization(env, exp.exp)))
   return env
 }

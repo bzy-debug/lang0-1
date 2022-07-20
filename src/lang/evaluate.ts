@@ -24,14 +24,16 @@ function evaluateVar(v: Var, env: Env): Value {
 }
 
 function evaluateFn(fn: Fn, env: Env): Value {
-  return { env: env, name: fn.name, body: fn.body }
+  return { kind: "Closure", env: env, name: fn.name, body: fn.body }
 }
 
 function apply(rator: Value, rand: Value): Value {
-  return evaluate(
-    rator.body,
-    extend(rator.env, rator.name.name, rand)
-  )
+  switch (rator.kind) {
+    case "Closure" : return evaluate(
+                              rator.body,
+                              extend(rator.env, rator.name.name, rand))
+    case "Neutral" : return { kind: "Neutral", nkind: "Nap", rator: rator, rand: rand }
+  }
 }
 
 function evaluateAp(Ap: Ap, env: Env): Value {

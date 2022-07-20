@@ -45,7 +45,7 @@ reduction(exp as Exps.Ap)
 console.log("")
 
 // this should not stop
-console.log("Test #9")
-exp = parser.parseExp("((lambda (x) (x x))(lambda (x) (x x)))")
-reduction(exp as Exps.Ap)
-console.log("")
+// console.log("Test #9")
+// exp = parser.parseExp("((lambda (x) (x x))(lambda (x) (x x)))")
+// reduction(exp as Exps.Ap)
+// console.log("")
