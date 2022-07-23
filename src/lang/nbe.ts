@@ -17,9 +17,9 @@ function newName(usedName: Set<string>, name: string): string {
 function readBack(usedName: Set<string>, v: Value): Exp {
   switch (v.kind) {
     case "Closure": {
-      let n = v.name.name
-      let n_ = newName(usedName, n)
-      let neutral_n_: Value = { kind: "Neutral", nkind: "Nvar", name: n_ }
+      const n = v.name.name
+      const n_ = newName(usedName, n)
+      const neutral_n_: Value = { kind: "Neutral", nkind: "Nvar", name: n_ }
       return {
         kind: "Fn",
         name: { kind: "Var", name: n_ },
@@ -39,5 +39,5 @@ function readBack(usedName: Set<string>, v: Value): Exp {
 }
 
 export function normalization (env: Env, exp: Exp): Exp {
-  return readBack( new Set(env.keys()), evaluate(exp, env))
+  return readBack(new Set(env.keys()), evaluate(exp, env))
 }

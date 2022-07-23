@@ -17,8 +17,9 @@ export function evaluate(exp: Exp, env: Env): Value {
 function evaluateVar(v: Var, env: Env): Value {
   const value = env.get(v.name)
   if (value === undefined) {
-    console.log(env)
-    throw new Error(`undefined variable ${v.name}`)
+    return {kind: "Neutral", nkind: "Nvar", name: v.name}
+    // console.log(env)
+    // throw new Error(`undefined variable ${v.name}`)
   }
   return value
 }
