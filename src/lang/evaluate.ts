@@ -18,8 +18,6 @@ function evaluateVar(v: Var, env: Env): Value {
   const value = env.get(v.name)
   if (value === undefined) {
     return {kind: "Neutral", nkind: "Nvar", name: v.name}
-    // console.log(env)
-    // throw new Error(`undefined variable ${v.name}`)
   }
   return value
 }
@@ -38,6 +36,7 @@ function apply(rator: Value, rand: Value): Value {
 }
 
 function evaluateAp(Ap: Ap, env: Env): Value {
+  // Applicative order
   const rator = evaluate(Ap.rator, env)
   const rand = evaluate(Ap.rand, env)
   return apply(rator, rand)

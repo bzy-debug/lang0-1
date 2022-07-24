@@ -7,7 +7,7 @@ function add_(name: string): string {
   return name + "_"
 }
 
-function newName(usedName: Set<string>, name: string): string {
+export function newName(usedName: Set<string>, name: string): string {
   if (usedName.has(name))
     return newName(usedName, add_(name))
   else
